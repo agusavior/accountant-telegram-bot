@@ -22,10 +22,7 @@ cents_of = dict()
 def any_message(bot, message):
     text = message.text
     chat_id = message.chat.id
-
-    if len(text) == 1:
-        return
-
+    
     if text.startswith('+') or text.startswith('-'):
         if chat_id not in cents_of:
             cents_of[chat_id] = 0
@@ -35,7 +32,7 @@ def any_message(bot, message):
         try:
             # Remove currency symbol
             text = text.replace('€', '')
-            
+
             # Update cents
             centsdiff = int(float(text) * 100)
             new_cents = current_cents + centsdiff
