@@ -9,10 +9,6 @@ from telegram import Bot
 
 from env import TOKEN, BOTNAME, ADMIN_CHAT_ID, ADMIN_USER_ID
 
-import logging
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                     level=logging.INFO)
-
 updater = None
 dispatcher = None
 bot = None
