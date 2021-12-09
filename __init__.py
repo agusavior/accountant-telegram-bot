@@ -35,7 +35,7 @@ def any_message(bot, message):
             new_cents = current_cents + centsdiff
             cents_of[chat_id] = new_cents
             output_text = '{:.2f} {}'.format(new_cents / 100.0, CURRENCY)
-            print(1)
+            
             # Germany standarts
             output_text = output_text.replace('.00', '.—')
             if output_text.startswith('0'):
