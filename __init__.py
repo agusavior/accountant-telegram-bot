@@ -13,12 +13,40 @@ updater = None
 dispatcher = None
 bot = None
 
+CURRENCY = '€'
+
+# Dict where keys are chat ids, and values are int
+cents_of = dict()
+
 @run_async
 def any_message(bot, message):
-    bot.send_message(message.chat.id, "Hello World")
+    text = message.text
+    chat_id = message.chat.id
+
+    if text.startswith('+') or text.startswith('-'):
+        if chat_id not in cents_of:
+            cents_of[chat_id] = 0
+
+        current_cents = cents_of[chat_id]
+
+        try:
+            # Update cents
+            centsdiff = int(float(text) * 100)
+            new_cents = current_cents + centsdiff
+            cents_of[chat_id] = new_cents
+            output_text = '{:.2f} {}'.format(new_cents / 100.0, CURRENCY)
+            print(1)
+            # Germany standarts
+            output_text = output_text.replace('.00', '.—')
+            if output_text.startswith('0'):
+                output_text = output_text.replace('0.', '—.')
+            
+            bot.send_message(message.chat.id, output_text)
+        except ValueError as e:
+            pass
 
 if __name__ == "__main__":
-    print("Inicia el main")
+    print("Hi.")
 
     updater = Updater(token=TOKEN, use_context = True)
     dispatcher = updater.dispatcher
@@ -46,8 +74,7 @@ if __name__ == "__main__":
     try:
         print("Press Ctrl+C to exit.")
         while True:
-            sleep(0.5)
-        #print "Salio del raw_input(). Se cerrará."
+            sleep(500)
     except KeyboardInterrupt:
         print("Ctrl-C detected. Exitting...")
     updater.stop()
