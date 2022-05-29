@@ -6,6 +6,7 @@ from time import sleep
 from telegram.ext import Filters , MessageHandler , Updater
 from telegram.ext.dispatcher import run_async
 from telegram import Bot
+import os
 
 from env import TOKEN, BOTNAME, ADMIN_CHAT_ID, ADMIN_USER_ID
 
@@ -15,19 +16,30 @@ bot = None
 
 CURRENCY = '€'
 
-# Dict where keys are chat ids, and values are int
-cents_of = dict()
-
 @run_async
 def any_message(bot, message):
     text = message.text
     chat_id = message.chat.id
 
     if text.startswith('+') or text.startswith('-'):
-        if chat_id not in cents_of:
-            cents_of[chat_id] = 0
+        # Create storage file if does not exist
+        try:
+            os.mkdir('storage')
+        except Exception as e:
+            print(f'Error creating storage folder. Error: {e}')
+        
+        # The file where we recall the debt number
+        file_path = f'storage/{chat_id}.txt'
 
-        current_cents = cents_of[chat_id]
+        # Create data file if it does not exist
+        if not os.path.exists(file_path):
+            with open(file_path, 'w') as f:
+                f.write('0')
+            print(f'Created a new data file {file_path} with value of 0 cents.')
+
+        # Get cents of data file
+        with open(file_path, 'r') as f:
+            current_cents = int(f.read())
 
         try:
             # Remove currency symbol
@@ -39,7 +51,6 @@ def any_message(bot, message):
             # Update cents
             centsdiff = int(float(text) * 100)
             new_cents = current_cents + centsdiff
-            cents_of[chat_id] = new_cents
             output_text = '{:.2f} {}'.format(new_cents / 100.0, CURRENCY)
             
             # Germany standarts
@@ -49,7 +60,14 @@ def any_message(bot, message):
             
             bot.send_message(message.chat.id, output_text)
         except ValueError as e:
-            pass
+            print(f'Value error parsing data. Error: {e}')
+
+            # Do not keep going
+            return
+
+        # Store new cents value in order to perform future actions
+        with open(file_path, 'w') as f:
+            f.write(str(new_cents))
 
 if __name__ == "__main__":
     print("Hi.")
