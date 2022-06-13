@@ -28,3 +28,13 @@ Run it.
 ```bash
 python __init__.py
 ```
+
+### With docker
+
+```bash
+# Create storage folder
+mkdir storage
+
+# Launch it
+docker build . -t acc && docker run --restart=always -d -v $(pwd)/storage:/app/storage acc
+```

@@ -26,7 +26,7 @@ def any_message(bot, message):
         try:
             os.mkdir('storage')
         except Exception as e:
-            print(f'Error creating storage folder. Error: {e}')
+            ...
         
         # The file where we recall the debt number
         file_path = f'storage/{chat_id}.txt'
