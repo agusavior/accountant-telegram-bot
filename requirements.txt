@@ -1,4 +1,4 @@
 python-telegram-bot==13.1
-
+python-dotenv==1.1.0
 # This is no longer needed because python-telegram-bot already installs it
 # telegram==0.0.1
